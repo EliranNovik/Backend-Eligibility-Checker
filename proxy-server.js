@@ -10,7 +10,7 @@ app.use(express.json()); // Add body-parser middleware
 
 app.get('/api/proxy', async (req, res) => {
   try {
-    const baseUrl = 'https://rmqdev.erps.co.il/hooks/catch/';
+    const baseUrl = 'https://www.rainmakerqueen.com/hooks/catch/';
     const params = new URLSearchParams(req.query).toString();
     const url = `${baseUrl}?${params}`;
 
