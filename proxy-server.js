@@ -16,6 +16,49 @@ app.get('/api/proxy', async (req, res) => {
 
     const response = await fetch(url);
     const text = await response.text();
+    
+    // Check if this is a Sabatier campaign with additional webhook
+    if (req.query.campaign === 'sabatier' && req.query.lead_source === '22186') {
+      try {
+        console.log('Sabatier campaign detected, sending to additional webhook');
+        
+        // Prepare data for the additional Sabatier webhook
+        const sabatierWebhookData = {
+          uid: req.query.uid,
+          lead_source: req.query.lead_source,
+          sid: req.query.sid,
+          name: req.query.name,
+          email: req.query.email,
+          topic: req.query.topic,
+          user_data: req.query.user_data,
+          phone: req.query.phone,
+          ref_url: req.query.ref_url,
+          desc: req.query.desc,
+          campaign: req.query.campaign,
+          timestamp: req.query.timestamp
+        };
+        
+        // Send to the additional Sabatier webhook
+        const sabatierWebhookUrl = 'https://hooks.zapier.com/hooks/catch/5153141/u2i3msj/';
+        const sabatierResponse = await fetch(sabatierWebhookUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(sabatierWebhookData)
+        });
+        
+        if (sabatierResponse.ok) {
+          console.log('Successfully sent data to additional Sabatier webhook');
+        } else {
+          console.warn('Failed to send data to additional Sabatier webhook:', sabatierResponse.status);
+        }
+      } catch (error) {
+        console.error('Error sending data to additional Sabatier webhook:', error);
+        // Don't fail the main request if additional webhook fails
+      }
+    }
+    
     res.status(response.status).send(text);
   } catch (err) {
     res.status(500).json({ error: 'Proxy error', details: err.message });
