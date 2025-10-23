@@ -65,6 +65,45 @@ app.get('/api/proxy', async (req, res) => {
   }
 });
 
+// Leadify webhook endpoint - ADD THIS AS A SEPARATE ENDPOINT
+app.post('/api/leadify-webhook', async (req, res) => {
+  try {
+    console.log('Leadify webhook received:', req.body);
+    
+    // Send to Leadify CRM endpoint
+    const leadifyResponse = await fetch('http://leadify-crm-backend/api/hook/catch', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(req.body)
+    });
+    
+    console.log('Leadify response status:', leadifyResponse.status);
+    
+    if (leadifyResponse.ok) {
+      console.log('Successfully sent data to Leadify CRM');
+      res.status(200).json({ success: true, message: 'Data sent to Leadify CRM' });
+    } else {
+      console.warn('Failed to send data to Leadify CRM:', leadifyResponse.status);
+      const responseText = await leadifyResponse.text();
+      console.warn('Leadify response:', responseText);
+      res.status(leadifyResponse.status).json({ 
+        success: false, 
+        error: 'Failed to send to Leadify CRM',
+        details: responseText 
+      });
+    }
+  } catch (error) {
+    console.error('Leadify webhook error:', error);
+    res.status(500).json({ 
+      success: false, 
+      error: 'Leadify webhook error', 
+      details: error.message 
+    });
+  }
+});
+
 // New analytics endpoint
 app.post('/api/analytics', async (req, res) => {
   try {
