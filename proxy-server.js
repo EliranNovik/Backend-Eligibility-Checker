@@ -65,13 +65,13 @@ app.get('/api/proxy', async (req, res) => {
   }
 });
 
-// Leadify webhook endpoint - ADD THIS AS A SEPARATE ENDPOINT
+// Leadify webhook endpoint
 app.post('/api/leadify-webhook', async (req, res) => {
   try {
     console.log('Leadify webhook received:', req.body);
     
-    // Send to Leadify CRM endpoint
-    const leadifyResponse = await fetch('http://leadify-crm-backend/api/hook/catch', {
+    // Send to Leadify CRM endpoint using public Render URL
+    const leadifyResponse = await fetch('https://leadify-backend.onrender.com/api/hook/catch', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
