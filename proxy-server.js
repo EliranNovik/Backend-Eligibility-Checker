@@ -71,7 +71,7 @@ app.post('/api/leadify-webhook', async (req, res) => {
     console.log('Leadify webhook received:', req.body);
     
     // Send to Leadify CRM endpoint using public Render URL
-    const leadifyResponse = await fetch('https://leadify-backend.onrender.com/api/hook/catch', {
+    const leadifyResponse = await fetch('https://leadify-crm-backend.onrender.com/api/hook/catch', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
